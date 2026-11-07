@@ -51,6 +51,10 @@ end
 function Main.CreateConnectionGroup(Values:ConnectionGroupType):Groupful
 	assert(Values.Name, "No group name was given!")
 	
+	if Main.Groups[Values.Name] then
+		return Main.Groups[Values.Name]
+	end
+	
 	const ConnectionData:{RBXScriptConnection?} = (Values.Connections or {})
 	const GroupName:string = (Values.Name :: string)
 	const MustDestroyManually = Values.MustDestroyManually
