@@ -73,7 +73,9 @@ function Main.GetConnectionGroup(GroupName:string):Groupful
 	if not groupData then		
 		warn(string.format("A connection group with the name of %s didn't exist! Creating one and returning that instead!", GroupName))
 		
-		return Main.CreateConnectionGroup(GroupName)
+		return Main.CreateConnectionGroup({
+			Name = GroupName
+		})
 	end
 	
 	return groupData
