@@ -42,7 +42,7 @@ end
 	
 		MustDestroyManually:boolean?
 		
-	Giving the bool value "true" to the argument "MustDestroyManually" makes it so that the "DisconnectAll" function doesn't disconnect everything in the group when called.
+	Giving the bool value "true" to the argument "MustDestroyManually" makes it so that the "DisconnectAll" and "DestroyAll" functions doesn't disconnect/destroy everything in the group when called.
 	
 	This function also has an assertion, regarding the group name, so it's recommended to be used inside of a pcall.
 	
@@ -143,19 +143,85 @@ function Main.DestroyGroup(self:Groupful | string)
 end
 
 --[[
+	Disconnects all of the connections that are under connection groups with the given data in their name.
+	Ignores connection groups that have the "MustDestroyManually" value set to the bool value "true" inside of its class data.
+	
+	@Y8
+]]
+function Main.DisconnectGroupsWithDataInName(Data:string)
+	for index, group:Groupful in Main.Groups do
+		task.spawn(function()
+			if group.MustDestroyManually then
+				return
+			end
+			
+			const groupName:string = (group.Name :: string)
+			
+			if not string.find(groupName, Data) then
+				return
+			end
+			
+			group:DisconnectGroupConnections()
+		end)
+	end	
+end
+
+--[[
+	Destroys all of the connection groups with the given data in their name.
+	Ignores connection groups that have the "MustDestroyManually" value set to the bool value "true" inside of its class data.
+	
+	@Y8
+]]
+function Main.DestroyGroupsWithDataInName(Data:string)
+	for index, group:Groupful in Main.Groups do
+		task.spawn(function()
+			if group.MustDestroyManually then
+				return
+			end
+			
+			const groupName:string = (group.Name :: string)
+
+			if not string.find(groupName, Data) then
+				return
+			end
+
+			group:DestroyGroup()
+		end)
+	end
+end
+
+--[[
 	Cleans up all of the connections.
 	Ignores connection groups that have the "MustDestroyManually" value set to the bool value "true" inside of its class data.
 	
 	@Y8
 ]]
 function Main.DisconnectAll()
-	for index, group in Main.Groups do
+	for index, group:Groupful in Main.Groups do
 		task.spawn(function()
 			if group.MustDestroyManually then
 				return
 			end
 
 			group:DisconnectGroupConnections()
+		end)
+	end
+end
+
+--[[
+	Destroys all of the connection groups.
+	Ignores connection groups that have the "MustDestroyManually" value set to the bool value "true" inside of its class data.
+	
+	@Y8
+]]
+function Main.DestroyAll()
+	for index, group:Groupful in Main.Groups do
+		task.spawn(function()
+			if group.MustDestroyManually then
+				return
+			end
+			
+			group:DestroyGroup()
 		end)
 	end
 end
